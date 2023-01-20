@@ -1,29 +1,38 @@
 <template>
-  <div class="entry-tittle d-flex justify-content-between p-2">
-    <div>
-        <span class="text-success fs-3 fw-bold">15</span>
-        <span class="mx-1 fs-3">Julio</span>
-        <span class="mx-2 fs-4 fw-light">2023, jueves</span>
-    </div>
+  <template v-if="entry">
+    <div class="entry-tittle d-flex justify-content-between p-2">
 
-    <div>
-        <button class="btn btn-danger mx-2">
-            Borrar
-            <i class="fa fa-trash-alt"></i>
-        </button>
+      <div>
+          <span class="text-success fs-3 fw-bold">{{dayMonthYear.day}}</span>
+          <span class="mx-1 fs-3">{{dayMonthYear.month}}</span>
+          <span class="mx-2 fs-4 fw-light">{{dayMonthYear.yearDay}}</span>
+      </div>
 
-         <button class="btn btn-primary">
-            Subir Foto
-            <i class="fa fa-upload"></i>
-        </button>
+      <div>
+          <button class="btn btn-danger mx-2">
+              Borrar
+              <i class="fa fa-trash-alt"></i>
+          </button>
+
+          <button class="btn btn-primary">
+              Subir Foto
+              <i class="fa fa-upload"></i>
+          </button>
+      </div>
     </div>
-  </div>
 
     <hr>
-    
-  <div class="d-flex flex-column px-3 h-75">
-    <textarea placeholder="¿Que sucedio hoy?"></textarea>>
-  </div>
+      
+    <div class="d-flex flex-column px-3 h-75">
+
+      <textarea 
+        v-model="entry.text" 
+        placeholder="¿Que sucedio hoy?"
+      ></textarea>
+
+    </div>
+
+  </template>
 
   <Fab 
     icon="fa-save"
@@ -34,12 +43,58 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent } from "vue"
+import { mapGetters } from "vuex"
+
+import getDayMonthYear from '../helpers/getDayMonthYear'
 
 export default {
-    components: {
-        Fab: defineAsyncComponent(() => import('../components/FaB.vue'))
+  props: {
+    id: {
+      type: String,
+      required: true
     }
+  },
+
+  components: {
+        Fab: defineAsyncComponent(() => import('../components/FaB.vue'))
+  },
+
+  data() {
+    return {
+      entry: null
+    }
+  },
+
+  methods: {
+    loadEntry() {
+      const entry = this.getEntryById( this.id )
+      if(!entry) return this.$router.push({ name: 'no-entry' })
+      
+      this.entry = entry
+        
+    }
+  },
+
+  computed: {
+    ...mapGetters('journal', ['getEntryById']),
+  
+    dayMonthYear() {
+            const {day, month, yearDay} = getDayMonthYear(this.entry.date)
+            return {day, month, yearDay}
+    },
+},
+
+  created() {
+    //console.log(this.id)
+    this.loadEntry()
+  },
+
+  watch: {
+    id() {
+      this.loadEntry()
+    }
+  }
 
 }
 </script>
