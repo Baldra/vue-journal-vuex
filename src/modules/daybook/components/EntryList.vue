@@ -1,5 +1,6 @@
-<template>
+<template>  
   <div class="entry-list-container">
+
     <div class="px-2 pt-2">
         <input  type="text" 
                 class="form-control d-flex"
@@ -8,11 +9,19 @@
         />
     </div>
 
+    <div class="mt-2 f-flex flex-column">
+        <button class="btn btn-primary mx-3"
+          @click="$router.push({ name:'entry', params:{ id: 'new'} })">
+            <i Class="fa fa-plus-circle"></i>
+            Nueva Entrada
+        </button>
+    </div>
+
     <div class="entry-scrollarea">
         <EntryC 
-          v-for="entry in entriesByTerm" 
-          :key="entry.id" 
-          :entry="entry" />
+        v-for="entry in entriesByTerm" 
+        :key="entry.id" 
+        :entry="entry" />
     </div>
 
   </div>
